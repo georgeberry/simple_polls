@@ -9,9 +9,11 @@ Do a regression to find a national trendline
 
 class ApiGetter(object):
     POLLS_PATH = 'polls.json'
-
-    STATES = ['US', 'VA', 'PA', 'CO', 'NH', 'FL',
-              'NV', 'OH', 'IA', 'NC', 'AZ', 'GA']
+    STATES = ['US','AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
+              'HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+              'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+              'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+              'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY']
 
     def __init__(self):
         pass
@@ -22,16 +24,16 @@ class ApiGetter(object):
                 page = 1
                 while True:
                     s = self.call_api(state, page, '2016-president')
-                    page += 1
-                    if len(s) == 0:
+                    if s == '[]':
                         break
+                    page += 1
                     for result in self.parse_api_output(s):
                         to_write = json.dumps(result)
                         f.write(to_write + '\n')
                         print(to_write)
                     print('Page {}. Sleeping for 2 seconds.'.format(page))
                     sleep(2)
-                break
+                sleep(2)
 
     def call_api(self, state, page, topic):
         api_str = ('http://elections.huffingtonpost.com/'

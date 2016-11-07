@@ -68,6 +68,8 @@ agg_df$smoothing_val = as.character(agg_df$smoothing_val)
 agg_df = rbind(as.data.frame(agg_df), as.data.frame(raw_median))
 
 agg_df$smoothing_val = factor(agg_df$smoothing_val, levels=c('None', 0.85, 0.8, 0.75, 0.7))
+agg_df$state = factor(agg_df$state,
+                      levels=c('GA', 'AZ', 'IA', 'OH', 'NC', 'NV', 'FL', 'WI', 'PA', 'NH', 'CO', 'VA'))
 
 p3 = ggplot(agg_df, aes(x = factor(state), y = median, color=factor(smoothing_val))) +
   geom_point() +
