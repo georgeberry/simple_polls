@@ -1,6 +1,43 @@
 library(ggplot2)
 library(dplyr)
 
+#### ggplot multiplot function ################################################
+
+# this function is from
+# http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)
+# included here for completeness
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  numPlots = length(plots)
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+ if (numPlots==1) {
+    print(plots[[1]])
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+#### constants and data loading ###############################################
+
 TODAY = 310
 LOESS_VALS = c(0.7, 0.75, 0.8, 0.85)
 
@@ -24,7 +61,6 @@ p2 = ggplot(national_df, aes(x=doy, y=dem_adv)) + stat_smooth(span=.85) + geom_p
   geom_hline(aes(yintercept=0), linetype='dashed') +
   theme_bw()
 multiplot(p1, p2, cols=2)
-
 
 #### state aggregation ########################################################
 
@@ -55,7 +91,6 @@ for (val in LOESS_VALS) {
   )
   aggregation_df = rbind(aggregation_df, adjusted_df)
 }
-
 
 #### aggregate  ###############################################################
 
