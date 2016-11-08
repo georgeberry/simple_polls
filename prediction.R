@@ -2,6 +2,7 @@ library(ggplot2)
 library(dplyr)
 
 df = read.csv('polls.csv')
+df = df[df$doy <= 311,]
 
 pred_df = df %>%
   group_by(state) %>%
