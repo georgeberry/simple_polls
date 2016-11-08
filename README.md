@@ -7,9 +7,9 @@ Median polling estimate with trendline adjustment
 In your shell:
 
 ```
-get_polls.py
+python3 get_polls.py
 
-make_data.py
+python3 make_data.py
 ```
 
 You should now have `polls.csv` which contains the poll data.
