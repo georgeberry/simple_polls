@@ -38,10 +38,11 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 #### constants and data loading ###############################################
 
-TODAY = 310
+TODAY = 311
 LOESS_VALS = c(0.7, 0.75, 0.8, 0.85)
 
 df = read.csv('polls.csv')
+df = df[df$doy <= TODAY,] # remove a dozen or so polls from last year
 
 national_df = df[df$state == 'US',]
 state_df = df[df$state != 'US',]
