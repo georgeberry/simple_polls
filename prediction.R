@@ -3,26 +3,19 @@ library(dplyr)
 
 df = read.csv('polls.csv')
 
-state_df = df[df$state != 'US',]
-national_df = df[df$state == 'US',]
-
-state_predictions = state_df %>%
+pred_df = df %>%
   group_by(state) %>%
-  summarize(median=median(dem_adv))
+  mutate(count = n()) %>%
+  filter(count > 5) %>%
+  summarize(prediction=median(dem_adv))
 
-national_prediction = national_df %>%
-  group_by(state) %>%
-  summarize(median=median(dem_adv))
+states = as.character(pred_df$state)
+states = states[order(pred_df$prediction)]
 
-agg_df = rbind(
-  as.data.frame(state_predictions),
-  as.data.frame(national_prediction))
+pred_df$state = factor(pred_df$state,
+                       levels=states)
 
-agg_df$state = factor(
-  agg_df$state,
-  levels=agg_df$state[order(agg_df$median)])
-
-ggplot(agg_df, aes(x=state, y=median)) +
+ggplot(pred_df, aes(x=state, y=prediction)) +
   geom_hline(aes(yintercept=0), linetype='dashed') +
   geom_point() +
   theme_bw()
