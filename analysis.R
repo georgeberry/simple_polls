@@ -40,13 +40,14 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 TODAY = 311
 LOESS_VALS = c(0.7, 0.75, 0.8, 0.85)
+SWING_STATES = c('GA', 'AZ', 'IA', 'OH', 'NC', 'NV', 'FL', 'WI', 'PA', 'NH', 'CO', 'VA')
 
 df = read.csv('polls.csv')
 df = df[df$doy <= TODAY,] # remove a dozen or so polls from last year
 
 national_df = df[df$state == 'US',]
 state_df = df[df$state != 'US',]
-state_df = state_df[state_df$state != 'WY',]
+state_df = df[df$state %in% SWING_STATES,]
 
 #### lowess regression ########################################################
 mod = loess(dem_adv ~ doy, national_df, span=0.75, control = loess.control(surface = "direct"))
@@ -105,7 +106,7 @@ agg_df = rbind(as.data.frame(agg_df), as.data.frame(raw_median))
 
 agg_df$smoothing_val = factor(agg_df$smoothing_val, levels=c('None', 0.85, 0.8, 0.75, 0.7))
 agg_df$state = factor(agg_df$state,
-                      levels=c('GA', 'AZ', 'IA', 'OH', 'NC', 'NV', 'FL', 'WI', 'PA', 'NH', 'CO', 'VA'))
+                      levels=SWING_STATES)
 
 p3 = ggplot(agg_df, aes(x = factor(state), y = median, color=factor(smoothing_val))) +
   geom_point() +
